@@ -42,11 +42,11 @@
 	<!-- ============================== HERO ============================== -->
 	<header>
 		<span class="eyebrow">flow-cursor</span>
-		<h1>The iPad cursor, ported natively to Svelte&nbsp;5.</h1>
+		<h1>The iPad like cursor, ported natively to Svelte&nbsp;5.</h1>
 		<p>
-			A drop-in <code>use:flowCursor</code> action for the
+			A drop-in <code>use:flowCursor</code> action based on the work of
 			<a href="https://github.com/CatsJuice/ipad-cursor">CatsJuice/ipad-cursor</a>
-			effect — same algorithm, same defaults, native to Svelte.
+			— same algorithm, same defaults, native to Svelte.
 		</p>
 		<pre class="install"><code>npm install flow-cursor</code></pre>
 	</header>
@@ -104,7 +104,7 @@
 	<!-- ============================ QUICKSTART ============================ -->
 	<section class="quickstart">
 		<h2 class="section-title">Quickstart</h2>
-		<p class="section-sub">Lo mínimo para que el cursor funcione. Tres pasos.</p>
+		<p class="section-sub">The minimum to get the cursor working. Three steps.</p>
 
 		<ol class="steps">
 			<li class="step">
@@ -115,10 +115,10 @@
 			<li class="step">
 				<h3><span class="step-num">2</span> Mount the controller</h3>
 				<p>
-					Llamá <code>initCursor()</code> una vez al inicio de tu app. Lo hacés en
-					el top-level del <code>&lt;script&gt;</code> (o dentro de
-					<code>onMount</code>) y <code>disposeCursor()</code> en
-					<code>onDestroy</code> para limpiar al desmontar.
+					Call <code>initCursor()</code> once at the start of your app. Do it at
+					the top level of <code>&lt;script&gt;</code> (or inside
+					<code>onMount</code>) and <code>disposeCursor()</code> in
+					<code>onDestroy</code> to clean up on unmount.
 				</p>
 				<pre class="code"><code>{`import { initCursor, disposeCursor } from 'flow-cursor';
 import { onDestroy } from 'svelte';
@@ -130,10 +130,10 @@ onDestroy(disposeCursor);    // clean up on unmount`}</code></pre>
 			<li class="step">
 				<h3><span class="step-num">3</span> Drop an action on any element</h3>
 				<p>
-					Usá los shorthands <code>use:blockCursor</code> o
-					<code>use:textCursor</code>, o el action principal
-					<code>use:flowCursor</code> con <code>type</code> explícito. Listo —
-					el cursor se magnetiza al hacer hover.
+					Use the <code>use:blockCursor</code> or <code>use:textCursor</code>
+					shorthands, or the main <code>use:flowCursor</code> action with an
+					explicit <code>type</code>. That's it — the cursor magnetizes on
+					hover.
 				</p>
 				<pre class="code"><code>{`<button use:blockCursor>Hover me</button>
 <p use:textCursor>Some text…</p>
@@ -145,17 +145,17 @@ onDestroy(disposeCursor);    // clean up on unmount`}</code></pre>
 
 	<!-- ============================== DEMOS ============================== -->
 	<section class="demos">
-		<h2 class="section-title">Directivas <code>use:</code></h2>
+		<h2 class="section-title">Directives <code>use:</code></h2>
 		<p class="section-sub">
-			Cada directive es un action de Svelte. Se montan en cualquier elemento y se
-			desmontan automáticamente cuando el element sale del DOM.
+			Each directive is a Svelte action. They mount on any element and unmount
+			automatically when the element leaves the DOM.
 		</p>
 
 		<!-- 1. blockCursor shorthand -->
 		<article class="demo">
 			<header class="demo-head">
 				<h2><code>use:blockCursor</code></h2>
-				<p>Cursor magnético que envuelve el bloque y se desplaza hacia el puntero.</p>
+				<p>Magnetic cursor that wraps the block and moves toward the pointer.</p>
 			</header>
 			<div class="preview">
 				<button type="button" use:blockCursor class="target target--block">
@@ -171,7 +171,7 @@ onDestroy(disposeCursor);    // clean up on unmount`}</code></pre>
 		<article class="demo">
 			<header class="demo-head">
 				<h2><code>use:textCursor</code></h2>
-				<p>Cursor fino vertical que se ajusta al tamaño de la tipografía del elemento.</p>
+				<p>Thin vertical cursor that adjusts to the font size of the element.</p>
 			</header>
 			<div class="preview">
 				<p use:textCursor class="target target--text">
@@ -187,9 +187,9 @@ onDestroy(disposeCursor);    // clean up on unmount`}</code></pre>
 		<article class="demo">
 			<header class="demo-head">
 				<h2>Per-element style</h2>
-				<p>Pasa un objeto <code>style</code> al action y se mergea sobre el
-					<code>blockStyle</code> global. Acepta también la string legacy
-					<code>data-cursor-style</code>.</p>
+				<p>Pass a <code>style</code> object to the action and it gets merged on top
+					of the global <code>blockStyle</code>. Also accepts the legacy
+					<code>data-cursor-style</code> string.</p>
 			</header>
 			<div class="preview">
 				<button
@@ -211,8 +211,8 @@ onDestroy(disposeCursor);    // clean up on unmount`}</code></pre>
 		<article class="demo">
 			<header class="demo-head">
 				<h2>Custom radius</h2>
-				<p><code>'auto'</code> hereda el <code>border-radius</code> del host. O pasá
-					un valor explícito para sobreescribirlo.</p>
+				<p><code>'auto'</code> inherits the host's <code>border-radius</code>. Or pass
+					an explicit value to override it.</p>
 			</header>
 			<div class="preview preview--row">
 				<button type="button" use:blockCursor={{ radius: '50%' }} class="target target--circle">
@@ -234,8 +234,8 @@ onDestroy(disposeCursor);    // clean up on unmount`}</code></pre>
 		<article class="demo">
 			<header class="demo-head">
 				<h2><code>use:flowCursor</code></h2>
-				<p>El action principal. Acepta <code>type</code>, <code>style</code> y
-					<code>initConfig</code> — los shorthands son azúcar para los casos comunes.</p>
+				<p>The main action. Accepts <code>type</code>, <code>style</code> and
+					<code>initConfig</code> — the shorthands are sugar for common cases.</p>
 			</header>
 			<div class="preview">
 				<button
@@ -261,9 +261,9 @@ onDestroy(disposeCursor);    // clean up on unmount`}</code></pre>
 	<section class="configs" aria-label="Global configuration">
 		<h2 class="section-title">Global config</h2>
 		<p class="section-sub">
-			Estas opciones se pasan a <code>initCursor()</code> al montar, o a
-			<code>updateConfig()</code> en cualquier momento. Aplican a todos los
-			elementos con <code>use:flowCursor</code> / <code>use:blockCursor</code> /
+			These options are passed to <code>initCursor()</code> at mount, or to
+			<code>updateConfig()</code> at any time. They apply to all elements with
+			<code>use:flowCursor</code> / <code>use:blockCursor</code> /
 			<code>use:textCursor</code>.
 		</p>
 
@@ -275,8 +275,8 @@ onDestroy(disposeCursor);    // clean up on unmount`}</code></pre>
 					<span>enableLighting</span>
 				</label>
 				<p>
-					Añade un halo radial dentro del block que sigue al puntero. Útil
-					para dar feedback visual extra sin cambiar la forma del cursor.
+					Adds a radial halo inside the block that follows the pointer. Useful
+					for extra visual feedback without changing the cursor shape.
 				</p>
 			</header>
 			<div class="preview">
@@ -299,8 +299,8 @@ updateConfig({ enableLighting: true });`}</code></pre>
 					<span>enableMouseDownEffect</span>
 				</label>
 				<p>
-					Aplica <code>mouseDownStyle</code> mientras el botón está pulsado.
-					Por defecto hace <code>scale: 0.8</code> + un fondo más opaco.
+					Applies <code>mouseDownStyle</code> while the button is held. Defaults
+					to <code>scale: 0.8</code> + a more opaque background.
 				</p>
 			</header>
 			<div class="preview">
@@ -326,9 +326,9 @@ initCursor({
 					<span>enableAutoTextCursor</span>
 				</label>
 				<p>
-					Detecta nodos de texto sueltos y les aplica automáticamente el cursor
-					de texto. No requiere <code>use:textCursor</code> — basta con texto
-					directo en un contenedor.
+					Detects loose text nodes and automatically applies the text cursor.
+					No <code>use:textCursor</code> required — plain text inside a
+					container is enough.
 				</p>
 			</header>
 			<div class="preview">
@@ -349,10 +349,10 @@ initCursor({ enableAutoTextCursor: true });`}</code></pre>
 					<span>enableAutoBlockCursor</span>
 				</label>
 				<p>
-					Aplica el block cursor a todo lo interactivo nativo:
+					Applies the block cursor to all native interactives:
 					<code>&lt;button&gt;</code>, <code>&lt;a href&gt;</code>,
-					<code>[role="button"]</code>, <code>&lt;summary&gt;</code>, etc.
-					Sin tocar el markup, sin <code>use:blockCursor</code>.
+					<code>[role="button"]</code>, <code>&lt;summary&gt;</code>, etc. No
+					markup changes, no <code>use:blockCursor</code>.
 				</p>
 			</header>
 			<div class="preview preview--row">
