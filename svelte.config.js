@@ -13,6 +13,10 @@ const config = {
 		paths: {
 			base: process.env.BASE_PATH || ''
 		}
+	},
+	compilerOptions: {
+		runes: ({ filename }) =>
+			filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 	}
 };
 
