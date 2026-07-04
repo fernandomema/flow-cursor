@@ -17,14 +17,14 @@
   <p align="center">
     The cursor that flows on the web — a Svelte 5 port of the iPad-cursor effect.
     <br />
-    <a href="#usage"><strong>Explore the docs »</strong></a>
+    <a href="https://fernandomema.github.io/flow-cursor/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/fernandomema/flow-cursor">View Demo</a>
+    <a href="https://fernandomema.github.io/flow-cursor/">View Demo</a>
     &middot;
-    <a href="https://github.com/fernandomema/flow-cursor/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/fernandomema/flow-cursor/issues/new?labels=bug">Report Bug</a>
     &middot;
-    <a href="https://github.com/fernandomema/flow-cursor/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/fernandomema/flow-cursor/issues/new?labels=enhancement">Request Feature</a>
   </p>
 </div>
 
