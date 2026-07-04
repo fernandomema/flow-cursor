@@ -1,0 +1,162 @@
+name: CD
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+concurrency:
+  group: cd-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI (check + test + build demo)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
+      - run: npm ci
+      - name: Type-check
+        run: npm run check
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run unit & browser tests
+        run: npm test
+      - name: Build demo (GitHub Pages)
+        run: npm run build
+      - name: Upload Pages artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  release:
+    name: Release & Publish to npm
+    if: github.event_name == 'push'
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          registry-url: "https://registry.npmjs.org"
+          cache: "npm"
+      - run: npm ci
+      - name: Build library
+        run: npm run build:lib
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run unit & browser tests
+        run: npm test
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+      - name: Sync package.json version
+        run: npm version "${{ steps.tag_version.outputs.new_tag }}" --no-git-tag-version
+      - name: Audit dependency signatures
+        run: npm audit signatures
+      - name: Publish to npm (provenance)
+        run: npm publish --provenance --access public
+
+  publish-dev:
+    name: Publish dev tag to npm
+    if: github.event_name == 'pull_request'
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          registry-url: "https://registry.npmjs.org"
+          cache: "npm"
+      - run: npm ci
+      - name: Build library
+        run: npm run build:lib
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run tests
+        id: test
+        run: npm test 2>&1 | tee test-output.txt
+        continue-on-error: true
+      - name: Read test output
+        id: test-output
+        if: steps.test.outcome == 'failure'
+        run: |
+          echo 'body<<EOF' >> $GITHUB_OUTPUT
+          echo '## ❌ Tests failed' >> $GITHUB_OUTPUT
+          echo '' >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          tail -60 test-output.txt >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+      - name: Comment PR on test failure
+        if: steps.test.outcome == 'failure'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: ${{ steps.test-output.outputs.body }}
+      - name: Fail if tests failed
+        if: steps.test.outcome == 'failure'
+        run: exit 1
+      - name: Publish dev tag
+        id: publish
+        run: |
+          new_version=$(npm version prerelease --preid dev-${{ github.run_id }} --no-git-tag-version)
+          echo "New version: $new_version"
+          npm publish --tag=dev --provenance
+          echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
+      - name: Comment on PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Beta tag version created: `${{ steps.publish.outputs.new_version }}`.
+            Install it with:
+            ```shell
+            npm install flow-cursor@${{ steps.publish.outputs.new_version }}
+            ```
+
+  pages:
+    name: Deploy demo to GitHub Pages
+    if: github.event_name == 'push'
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

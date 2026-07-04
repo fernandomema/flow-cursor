@@ -3,10 +3,12 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && npm run prepack",
+		"build": "vite build && npm run build:lib",
+		"build:lib": "svelte-kit sync && svelte-package && publint",
+		"build:demo": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
-		"prepack": "svelte-kit sync && svelte-package && publint",
+		"prepack": "npm run build:lib",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
@@ -32,8 +34,16 @@
 	"peerDependencies": {
 		"svelte": "^5.0.0"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fernandomema/flow-cursor.git"
+	},
+	"homepage": "https://fernandomema.github.io/flow-cursor/",
+	"bugs": {
+		"url": "https://github.com/fernandomema/flow-cursor/issues"
+	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^7.0.1",
+		"@sveltejs/adapter-static": "^3.0.8",
 		"@sveltejs/kit": "^2.63.0",
 		"@sveltejs/package": "^2.5.8",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
