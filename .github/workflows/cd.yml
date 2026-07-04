@@ -79,7 +79,7 @@ jobs:
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
       - name: Sync package.json version
-        run: npm version "${{ steps.tag_version.outputs.new_tag }}" --no-git-tag-version
+        run: npm pkg set version="$(echo ${{ steps.tag_version.outputs.new_tag }} | sed 's/^v//')"
       - name: Audit dependency signatures
         run: npm audit signatures
       - name: Publish to npm (provenance)
